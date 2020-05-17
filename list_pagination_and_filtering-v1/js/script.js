@@ -102,19 +102,30 @@ function searchBar() {
 }
 
 function searchFunc(e) {
+  let match;
   let nameArray = [];
   let nameElements = document.getElementsByTagName("h3");
   for (i = 0; i < nameElements.length; i++) {
     nameArray[i] = nameElements[i].innerHTML;
   }
   let input = e.target.value;
+  //console.log("input: " + input);
+  //console.log(input[0]);
 
-  for (let i = 0; i < listItems.length; i++)
-    if (input === nameArray[i]) {
+  for (let i = 0; i < listItems.length; i++) {
+    match = true;
+    for (j = 0; j < input.length; j++) {
+      if (input[j] !== nameArray[i][j]) {
+        match = false;
+      }
+    }
+
+    if (match) {
       listItems[i].style.display = "block";
     } else {
       listItems[i].style.display = "none";
     }
+  }
 }
 
 searchBar();
