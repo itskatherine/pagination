@@ -69,6 +69,11 @@ function makeSearchBar() {
   searchDiv.appendChild(searchInput);
   searchDiv.appendChild(searchButton);
   searchInput.addEventListener("keyup", searchFunc);
+
+  let list = document.querySelector(".student-list");
+  let message = document.createElement("p");
+  message.className = "searchMessage";
+  list.append(message);
 }
 
 function searchFunc(e) {
@@ -96,8 +101,13 @@ function searchFunc(e) {
   }
 
   initialise(newItemList);
+
+  let message = document.querySelector(".searchMessage");
+
   if (newItemList.length === 0) {
-    console.log("No results to show");
+    message.textContent = "Nothing to display";
+  } else {
+    message.textContent = "";
   }
 }
 
