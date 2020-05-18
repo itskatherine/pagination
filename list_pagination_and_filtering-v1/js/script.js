@@ -31,10 +31,10 @@ function appendLinks(list) {
   let pageDiv = document.querySelector(".page");
   pageDiv.appendChild(containerDiv);
 
-  const numberOfPages = Math.ceil(list.length / itemsPerPage);
-
   let ul = document.createElement("ul");
   containerDiv.appendChild(ul);
+
+  const numberOfPages = Math.ceil(list.length / itemsPerPage);
 
   for (let i = 0; i < numberOfPages; i++) {
     let li = document.createElement("li");
@@ -42,7 +42,14 @@ function appendLinks(list) {
     let a = document.createElement("a");
     a.href = "#";
     a.textContent = i + 1;
-    a.addEventListener("click", clickHandler);
+    a.addEventListener("click", (e) => {
+      let aArray = document.getElementsByTagName("a");
+      for (let child in aArray) {
+        aArray[child].className = "inactive";
+      }
+      e.target.className = "active";
+      showPage(list, parseInt(e.target.textContent));
+    });
     if (i === 0) {
       a.className = "active";
     }
@@ -50,16 +57,7 @@ function appendLinks(list) {
   }
 }
 
-function clickHandler(e) {
-  let aArray = document.getElementsByTagName("a");
-  for (let child in aArray) {
-    aArray[child].className = "inactive";
-  }
-  e.target.className = "active";
-  showPage(listItems, parseInt(e.target.textContent));
-}
-
-function searchBar() {
+function makeSearchBar() {
   let header = document.querySelector(".page-header");
   let searchDiv = document.createElement("div");
   searchDiv.className = "student-search";
@@ -67,19 +65,15 @@ function searchBar() {
   searchInput.placeholder = "Search for students";
   let searchButton = document.createElement("button");
   searchButton.innerHTML = "Search";
-
   header.appendChild(searchDiv);
   searchDiv.appendChild(searchInput);
   searchDiv.appendChild(searchButton);
-
   searchInput.addEventListener("keyup", searchFunc);
 }
 
 function searchFunc(e) {
-  let match;
-  let newItemList = [];
   let nameArray = [];
-
+  let newItemList = [];
   let nameElements = document.getElementsByTagName("h3");
   for (i = 0; i < nameElements.length; i++) {
     nameArray[i] = nameElements[i].innerHTML;
@@ -87,27 +81,35 @@ function searchFunc(e) {
   let input = e.target.value.toLowerCase();
 
   if (!input) {
-    showPage(listItems, 1);
+    initialise(listItems);
     return;
   }
 
   for (let i = 0; i < listItems.length; i++) {
-    match = true;
-
-    if (!nameArray[i].includes(input)) {
-      match = false;
-    } else {
+    if (nameArray[i].includes(input)) {
       newItemList.push(listItems[i]);
     }
+  }
 
-    if (match) {
-      listItems[i].style.display = "block";
-    } else {
-      listItems[i].style.display = "none";
-    }
+  for (let i = 0; i < listItems.length; i++) {
+    listItems[i].style.display = "none";
+  }
+
+  initialise(newItemList);
+  if (newItemList.length === 0) {
+    console.log("No results to show");
   }
 }
 
-showPage(listItems, 1);
-appendLinks(listItems);
-searchBar();
+function initialise(list) {
+  showPage(list, 1);
+  let containerDiv = document.querySelector(".pagination");
+  let pageDiv = document.querySelector(".page");
+  if (containerDiv) {
+    containerDiv.parentNode.removeChild(containerDiv);
+  }
+  appendLinks(list);
+}
+
+initialise(listItems);
+makeSearchBar();
